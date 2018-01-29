@@ -178,3 +178,91 @@ print("b1 = " + str(parameters["b1"]))
 print("W2 = " + str(parameters["W2"]))
 print("b2 = " + str(parameters["b2"]))
 
+
+# **Expected output**:
+#
+# <table style="width:80%">
+#   <tr>
+#     <td> **W1** </td>
+#     <td>[[ 0.01788628  0.0043651   0.00096497 -0.01863493 -0.00277388]
+#  [-0.00354759 -0.00082741 -0.00627001 -0.00043818 -0.00477218]
+#  [-0.01313865  0.00884622  0.00881318  0.01709573  0.00050034]
+#  [-0.00404677 -0.0054536  -0.01546477  0.00982367 -0.01101068]]</td>
+#   </tr>
+#
+#   <tr>
+#     <td>**b1** </td>
+#     <td>[[ 0.]
+#  [ 0.]
+#  [ 0.]
+#  [ 0.]]</td>
+#   </tr>
+#
+#   <tr>
+#     <td>**W2** </td>
+#     <td>[[-0.01185047 -0.0020565   0.01486148  0.00236716]
+#  [-0.01023785 -0.00712993  0.00625245 -0.00160513]
+#  [-0.00768836 -0.00230031  0.00745056  0.01976111]]</td>
+#   </tr>
+#
+#   <tr>
+#     <td>**b2** </td>
+#     <td>[[ 0.]
+#  [ 0.]
+#  [ 0.]]</td>
+#   </tr>
+#
+# </table>
+
+# ## 4 - Forward propagation module
+#
+# ### 4.1 - Linear Forward
+# Now that you have initialized your parameters, you will do the forward propagation module. You will start by implementing some basic functions that you will use later when implementing the model. You will complete three functions in this order:
+#
+# - LINEAR
+# - LINEAR -> ACTIVATION where ACTIVATION will be either ReLU or Sigmoid.
+# - [LINEAR -> RELU] $\times$ (L-1) -> LINEAR -> SIGMOID (whole model)
+#
+# The linear forward module (vectorized over all the examples) computes the following equations:
+#
+# $$Z^{[l]} = W^{[l]}A^{[l-1]} +b^{[l]}\tag{4}$$
+#
+# where $A^{[0]} = X$.
+#
+# **Exercise**: Build the linear part of forward propagation.
+#
+# **Reminder**:
+# The mathematical representation of this unit is $Z^{[l]} = W^{[l]}A^{[l-1]} +b^{[l]}$. You may also find `np.dot()` useful. If your dimensions don't match, printing `W.shape` may help.
+
+# In[8]:
+
+# GRADED FUNCTION: linear_forward
+
+def linear_forward(A, W, b):
+    """
+    Implement the linear part of a layer's forward propagation.
+    Arguments:
+    A -- activations from previous layer (or input data): (size of previous layer, number of examples)
+    W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
+    b -- bias vector, numpy array of shape (size of the current layer, 1)
+    Returns:
+    Z -- the input of the activation function, also called pre-activation parameter
+    cache -- a python dictionary containing "A", "W" and "b" ; stored for computing the backward pass efficiently
+    """
+
+    ### START CODE HERE ### (≈ 1 line of code)
+    Z = np.dot(W, A) + b
+    ### END CODE HERE ###
+
+    assert (Z.shape == (W.shape[0], A.shape[1]))
+    cache = (A, W, b)
+
+    return Z, cache
+
+
+# In[9]:
+
+A, W, b = linear_forward_test_case()
+
+Z, linear_cache = linear_forward(A, W, b)
+print("Z = " + str(Z))

@@ -266,3 +266,82 @@ A, W, b = linear_forward_test_case()
 
 Z, linear_cache = linear_forward(A, W, b)
 print("Z = " + str(Z))
+
+
+# **Expected output**:
+#
+# <table style="width:35%">
+#
+#   <tr>
+#     <td> **Z** </td>
+#     <td> [[ 3.26295337 -1.23429987]] </td>
+#   </tr>
+#
+# </table>
+
+# ### 4.2 - Linear-Activation Forward
+#
+# In this notebook, you will use two activation functions:
+#
+# - **Sigmoid**: $\sigma(Z) = \sigma(W A + b) = \frac{1}{ 1 + e^{-(W A + b)}}$. We have provided you with the `sigmoid` function. This function returns **two** items: the activation value "`a`" and a "`cache`" that contains "`Z`" (it's what we will feed in to the corresponding backward function). To use it you could just call:
+# ``` python
+# A, activation_cache = sigmoid(Z)
+# ```
+#
+# - **ReLU**: The mathematical formula for ReLu is $A = RELU(Z) = max(0, Z)$. We have provided you with the `relu` function. This function returns **two** items: the activation value "`A`" and a "`cache`" that contains "`Z`" (it's what we will feed in to the corresponding backward function). To use it you could just call:
+# ``` python
+# A, activation_cache = relu(Z)
+# ```
+
+# For more convenience, you are going to group two functions (Linear and Activation) into one function (LINEAR->ACTIVATION). Hence, you will implement a function that does the LINEAR forward step followed by an ACTIVATION forward step.
+#
+# **Exercise**: Implement the forward propagation of the *LINEAR->ACTIVATION* layer. Mathematical relation is: $A^{[l]} = g(Z^{[l]}) = g(W^{[l]}A^{[l-1]} +b^{[l]})$ where the activation "g" can be sigmoid() or relu(). Use linear_forward() and the correct activation function.
+
+# In[10]:
+
+# GRADED FUNCTION: linear_activation_forward
+
+def linear_activation_forward(A_prev, W, b, activation):
+    """
+    Implement the forward propagation for the LINEAR->ACTIVATION layer
+    Arguments:
+    A_prev -- activations from previous layer (or input data): (size of previous layer, number of examples)
+    W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
+    b -- bias vector, numpy array of shape (size of the current layer, 1)
+    activation -- the activation to be used in this layer, stored as a text string: "sigmoid" or "relu"
+    Returns:
+    A -- the output of the activation function, also called the post-activation value
+    cache -- a python dictionary containing "linear_cache" and "activation_cache";
+             stored for computing the backward pass efficiently
+    """
+
+    if activation == "sigmoid":
+        # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
+        ### START CODE HERE ### (≈ 2 lines of code)
+        Z, linear_cache = linear_forward(A_prev, W, b)
+        A, activation_cache = sigmoid(Z)
+        ### END CODE HERE ###
+
+    elif activation == "relu":
+        # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
+        ### START CODE HERE ### (≈ 2 lines of code)
+        Z, linear_cache = linear_forward(A_prev, W, b)
+        A, activation_cache = relu(Z)
+        ### END CODE HERE ###
+
+    assert (A.shape == (W.shape[0], A_prev.shape[1]))
+    cache = (linear_cache, activation_cache)
+
+    return A, cache
+
+
+# In[11]:
+
+A_prev, W, b = linear_activation_forward_test_case()
+
+A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation="sigmoid")
+print("With sigmoid: A = " + str(A))
+
+A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation="relu")
+print("With ReLU: A = " + str(A))
+

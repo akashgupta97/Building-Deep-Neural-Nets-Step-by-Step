@@ -345,3 +345,79 @@ print("With sigmoid: A = " + str(A))
 A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation="relu")
 print("With ReLU: A = " + str(A))
 
+# **Expected output**:
+#
+# <table style="width:35%">
+#   <tr>
+#     <td> **With sigmoid: A ** </td>
+#     <td > [[ 0.96890023  0.11013289]]</td>
+#   </tr>
+#   <tr>
+#     <td> **With ReLU: A ** </td>
+#     <td > [[ 3.43896131  0.        ]]</td>
+#   </tr>
+# </table>
+#
+
+# **Note**: In deep learning, the "[LINEAR->ACTIVATION]" computation is counted as a single layer in the neural network, not two layers.
+
+# ### d) L-Layer Model
+#
+def L_model_forward(X, parameters):
+    """
+    Implement forward propagation for the [LINEAR->RELU]*(L-1)->LINEAR->SIGMOID computation
+
+    Arguments:
+    X -- data, numpy array of shape (input size, number of examples)
+    parameters -- output of initialize_parameters_deep()
+
+    Returns:
+    AL -- last post-activation value
+    caches -- list of caches containing:
+                every cache of linear_relu_forward() (there are L-1 of them, indexed from 0 to L-2)
+                the cache of linear_sigmoid_forward() (there is one, indexed L-1)
+    """
+
+    caches = []
+    A = X
+    L = len(parameters) // 2  # number of layers in the neural network
+
+    # Implement [LINEAR -> RELU]*(L-1). Add "cache" to the "caches" list.
+    for l in range(1, L):
+        A_prev = A
+        ### START CODE HERE ### (≈ 2 lines of code)
+        A, cache = linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)],
+                                             activation="relu")
+        caches.append(cache)
+        ### END CODE HERE ###
+
+    # Implement LINEAR -> SIGMOID. Add "cache" to the "caches" list.
+    ### START CODE HERE ### (≈ 2 lines of code)
+    AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation="sigmoid")
+    caches.append(cache)
+    ### END CODE HERE ###
+
+    assert (AL.shape == (1, X.shape[1]))
+
+    return AL, caches
+
+
+# In[25]:
+
+X, parameters = L_model_forward_test_case()
+AL, caches = L_model_forward(X, parameters)
+print("AL = " + str(AL))
+print("Length of caches list = " + str(len(caches)))
+
+
+# <table style="width:40%">
+#   <tr>
+#     <td> **AL** </td>
+#     <td > [[ 0.17007265  0.2524272 ]]</td>
+#   </tr>
+#   <tr>
+#     <td> **Length of caches list ** </td>
+#     <td > 2</td>
+#   </tr>
+# </table>
+

@@ -421,3 +421,105 @@ print("Length of caches list = " + str(len(caches)))
 #   </tr>
 # </table>
 
+# GRADED FUNCTION: compute_cost
+
+def compute_cost(AL, Y):
+    """
+    Implement the cost function defined by equation (7).
+    Arguments:
+    AL -- probability vector corresponding to your label predictions, shape (1, number of examples)
+    Y -- true "label" vector (for example: containing 0 if non-cat, 1 if cat), shape (1, number of examples)
+    Returns:
+    cost -- cross-entropy cost
+    """
+
+    m = Y.shape[1]
+
+    # Compute loss from aL and y.
+    ### START CODE HERE ### (≈ 1 lines of code)
+    cost = -1 / m * (np.dot(Y, np.log(AL.T)) + np.dot(1 - Y, np.log(1 - AL).T))
+    ### END CODE HERE ###
+
+    cost = np.squeeze(cost)  # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
+    assert (cost.shape == ())
+
+    return cost
+
+
+# In[29]:
+
+Y, AL = compute_cost_test_case()
+
+print("cost = " + str(compute_cost(AL, Y)))
+
+
+# **Expected Output**:
+#
+# <table>
+#
+#     <tr>
+#     <td>**cost** </td>
+#     <td> 0.41493159961539694</td>
+#     </tr>
+# </table>
+def linear_backward(dZ, cache):
+    """
+    Implement the linear portion of backward propagation for a single layer (layer l)
+    Arguments:
+    dZ -- Gradient of the cost with respect to the linear output (of current layer l)
+    cache -- tuple of values (A_prev, W, b) coming from the forward propagation in the current layer
+    Returns:
+    dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+    dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+    db -- Gradient of the cost with respect to b (current layer l), same shape as b
+    """
+    A_prev, W, b = cache
+    m = A_prev.shape[1]
+
+    ### START CODE HERE ### (≈ 3 lines of code)
+    dW = 1 / m * (np.dot(dZ, A_prev.T))
+    db = 1 / m * (np.sum(dZ, axis=1, keepdims=True))
+    dA_prev = np.dot(W.T, dZ)
+    ### END CODE HERE ###
+
+    assert (dA_prev.shape == A_prev.shape)
+    assert (dW.shape == W.shape)
+    assert (db.shape == b.shape)
+
+    return dA_prev, dW, db
+
+
+# In[33]:
+
+# Set up some test inputs
+dZ, linear_cache = linear_backward_test_case()
+
+dA_prev, dW, db = linear_backward(dZ, linear_cache)
+print("dA_prev = " + str(dA_prev))
+print("dW = " + str(dW))
+print("db = " + str(db))
+
+
+# **Expected Output**:
+#
+# <table style="width:90%">
+#   <tr>
+#     <td> **dA_prev** </td>
+#     <td > [[ 0.51822968 -0.19517421]
+#  [-0.40506361  0.15255393]
+#  [ 2.37496825 -0.89445391]] </td>
+#   </tr>
+#
+#     <tr>
+#         <td> **dW** </td>
+#         <td > [[-0.10076895  1.40685096  1.64992505]] </td>
+#     </tr>
+#
+#     <tr>
+#         <td> **db** </td>
+#         <td> [[ 0.50629448]] </td>
+#     </tr>
+#
+# </table>
+#
+#

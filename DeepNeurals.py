@@ -618,3 +618,90 @@ print("db = " + str(db))
 # </table>
 #
 #
+def L_model_backward(AL, Y, caches):
+    """
+    Implement the backward propagation for the [LINEAR->RELU] * (L-1) -> LINEAR -> SIGMOID group
+
+    Arguments:
+    AL -- probability vector, output of the forward propagation (L_model_forward())
+    Y -- true "label" vector (containing 0 if non-cat, 1 if cat)
+    caches -- list of caches containing:
+                every cache of linear_activation_forward() with "relu" (it's caches[l], for l in range(L-1) i.e l = 0...L-2)
+                the cache of linear_activation_forward() with "sigmoid" (it's caches[L-1])
+
+    Returns:
+    grads -- A dictionary with the gradients
+             grads["dA" + str(l)] = ...
+             grads["dW" + str(l)] = ...
+             grads["db" + str(l)] = ...
+    """
+    grads = {}
+    L = len(caches)  # the number of layers
+    m = AL.shape[1]
+    Y = Y.reshape(AL.shape)  # after this line, Y is the same shape as AL
+
+    # Initializing the backpropagation
+    ### START CODE HERE ### (1 line of code)
+    dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
+    ### END CODE HERE ###
+
+    # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "AL, Y, caches". Outputs: "grads["dAL"], grads["dWL"], grads["dbL"]
+    ### START CODE HERE ### (approx. 2 lines)
+    current_cache = caches[L - 1]
+    grads["dA" + str(L)], grads["dW" + str(L)], grads["db" + str(L)] = linear_activation_backward(dAL, current_cache,
+                                                                                                  activation="sigmoid")
+    ### END CODE HERE ###
+
+    for l in reversed(range(L - 1)):
+        # lth layer: (RELU -> LINEAR) gradients.
+        # Inputs: "grads["dA" + str(l + 2)], caches". Outputs: "grads["dA" + str(l + 1)] , grads["dW" + str(l + 1)] , grads["db" + str(l + 1)]
+        ### START CODE HERE ### (approx. 5 lines)
+        current_cache = caches[l]
+        dA_prev_temp, dW_temp, db_temp = linear_activation_backward(grads["dA" + str(L)], current_cache,
+                                                                    activation="relu")
+        grads["dA" + str(l + 1)] = dA_prev_temp
+        grads["dW" + str(l + 1)] = dW_temp
+        grads["db" + str(l + 1)] = db_temp
+        ### END CODE HERE ###
+
+    return grads
+
+
+# In[39]:
+
+AL, Y_assess, caches = L_model_backward_test_case()
+grads = L_model_backward(AL, Y_assess, caches)
+print("dW1 = " + str(grads["dW1"]))
+print("db1 = " + str(grads["db1"]))
+print("dA1 = " + str(grads["dA1"]))
+
+
+# **Expected Output**
+#
+# <table style="width:60%">
+#
+#   <tr>
+#     <td > dW1 </td>
+#            <td > [[ 0.41010002  0.07807203  0.13798444  0.10502167]
+#  [ 0.          0.          0.          0.        ]
+#  [ 0.05283652  0.01005865  0.01777766  0.0135308 ]] </td>
+#   </tr>
+#
+#     <tr>
+#     <td > db1 </td>
+#            <td > [[-0.22007063]
+#  [ 0.        ]
+#  [-0.02835349]] </td>
+#   </tr>
+#
+#   <tr>
+#   <td > dA1 </td>
+#            <td > [[ 0.          0.52257901]
+#  [ 0.         -0.3269206 ]
+#  [ 0.         -0.32070404]
+#  [ 0.         -0.74079187]] </td>
+#
+#   </tr>
+# </table>
+#
+#

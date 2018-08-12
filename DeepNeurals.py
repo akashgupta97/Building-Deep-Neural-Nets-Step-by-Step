@@ -705,3 +705,70 @@ print("dA1 = " + str(grads["dA1"]))
 # </table>
 #
 #
+
+def update_parameters(parameters, grads, learning_rate):
+    """
+    Update parameters using gradient descent
+
+    Arguments:
+    parameters -- python dictionary containing your parameters
+    grads -- python dictionary containing your gradients, output of L_model_backward
+
+    Returns:
+    parameters -- python dictionary containing your updated parameters
+                  parameters["W" + str(l)] = ...
+                  parameters["b" + str(l)] = ...
+    """
+
+    L = len(parameters) // 2  # number of layers in the neural network
+
+    # Update rule for each parameter. Use a for loop.
+    ### START CODE HERE ### (≈ 3 lines of code)
+    for l in range(L):
+        parameters["W" + str(l + 1)] = parameters["W" + str(l + 1)] - learning_rate * grads["dW" + str(l + 1)]
+        parameters["b" + str(l + 1)] = parameters["b" + str(l + 1)] - learning_rate * grads["db" + str(l + 1)]
+    ### END CODE HERE ###
+
+    return parameters
+
+
+# In[42]:
+
+parameters, grads = update_parameters_test_case()
+parameters = update_parameters(parameters, grads, 0.1)
+
+print("W1 = " + str(parameters["W1"]))
+print("b1 = " + str(parameters["b1"]))
+print("W2 = " + str(parameters["W2"]))
+print("b2 = " + str(parameters["b2"]))
+
+
+# **Expected Output**:
+#
+# <table style="width:100%">
+#     <tr>
+#     <td > W1 </td>
+#            <td > [[-0.59562069 -0.09991781 -2.14584584  1.82662008]
+#  [-1.76569676 -0.80627147  0.51115557 -1.18258802]
+#  [-1.0535704  -0.86128581  0.68284052  2.20374577]] </td>
+#   </tr>
+#
+#     <tr>
+#     <td > b1 </td>
+#            <td > [[-0.04659241]
+#  [-1.28888275]
+#  [ 0.53405496]] </td>
+#   </tr>
+#   <tr>
+#     <td > W2 </td>
+#            <td > [[-0.55569196  0.0354055   1.32964895]]</td>
+#   </tr>
+#
+#     <tr>
+#     <td > b2 </td>
+#            <td > [[-0.84610769]] </td>
+#   </tr>
+# </table>
+#
+
+#
